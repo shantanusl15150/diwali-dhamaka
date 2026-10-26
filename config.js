@@ -12,10 +12,10 @@ window.PARTY_CONFIG = {
   },
 
   // Google Apps Script web-app URL (see apps-script/Code.gs). Empty = demo mode, nothing is sent.
-  rsvpEndpoint: "",
+  rsvpEndpoint: "https://script.google.com/macros/s/AKfycbzMopOHnmAy6Rd6EWGD5rg0ZakQChZdFZTrXGKqP1Ahti8XdQhOob0GdvX5xuCyBXk8/exec",
 
   // Optional backup channel, digits only with country code, e.g. "919876543210".
-  whatsappNumber: "",
+  whatsappNumber: "917506662251",
 
   // Wheel options per RSVP choice. Replace with the final food list.
   wheels: {
