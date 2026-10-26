@@ -27,19 +27,20 @@ const FIELDS = [
   ["response", "Response"],
   ["arrivalTime", "Arrival Time"],
   ["drink", "Party Fuel"],
-  ["plusOneName", "+1 Name"],
-  ["plusOneRelation", "+1 Relation"],
-  ["plusOnePhone", "+1 WhatsApp"],
-  ["plusOneDrink", "+1 Party Fuel"],
+  // Header labels must not start with +, =, - or @ — Sheets treats those as formulas (#ERROR!).
+  ["plusOneName", "Plus One Name"],
+  ["plusOneRelation", "Plus One Relation"],
+  ["plusOnePhone", "Plus One WhatsApp"],
+  ["plusOneDrink", "Plus One Party Fuel"],
   ["item", "Assigned Item"],
   ["team", "Team"],
   ["mission", "Secret Mission"],
   ["quizScore", "Audition Points"],
   ["seat", "Seat"],
-  ["plusOneTeam", "+1 Team"],
-  ["plusOneMission", "+1 Secret Mission"],
-  ["plusOneQuizScore", "+1 Audition Points"],
-  ["plusOneSeat", "+1 Seat"],
+  ["plusOneTeam", "Plus One Team"],
+  ["plusOneMission", "Plus One Secret Mission"],
+  ["plusOneQuizScore", "Plus One Audition Points"],
+  ["plusOneSeat", "Plus One Seat"],
   ["songRequest", "Song Request"],
   ["charadesMovie", "Charades Movie"],
   ["guestId", "Guest ID"],
@@ -352,11 +353,15 @@ function requirePin_(pin) {
 function getSheet_(name, headers) {
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = spreadsheet.getSheetByName(name) || spreadsheet.insertSheet(name);
+  const safeHeaders = headers.map(safeCell_);
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(headers);
+    sheet.appendRow(safeHeaders);
     sheet.setFrozenRows(1);
-    sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold");
+  } else {
+    // Refresh labels so Sheets doesn't keep old "+1 …" formula errors in row 1.
+    sheet.getRange(1, 1, 1, headers.length).setValues([safeHeaders]);
   }
+  sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold");
   return sheet;
 }
 
