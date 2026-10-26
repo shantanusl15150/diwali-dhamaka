@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Diwali Dhamaka · A Bollywood House Party</title>
+    <meta name="description" content="You're invited to a Bollywood Diwali house party! 1 Nov, 6 PM onwards. Traditional attire compulsory." />
+    <meta property="og:title" content="Diwali Dhamaka 🪔 A Bollywood House Party" />
+    <meta property="og:description" content="1 Nov · 6 PM onwards · Traditional attire compulsory. Audition, get cast into a team & grab your ticket!" />
+    <meta name="theme-color" content="#12031f" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪔</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Rozha+One&family=Poppins:wght@400;500;600;700;800&family=Monoton&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Intro curtain -->
+    <div class="curtain" id="curtain" role="dialog" aria-label="Welcome">
+      <div class="curtain-half curtain-left"></div>
+      <div class="curtain-half curtain-right"></div>
+      <div class="clapper">
+        <div class="clapper-top" aria-hidden="true"></div>
+        <div class="clapper-body">
+          <div class="clapper-row"><span>PROD.</span><strong>Diwali Dhamaka</strong></div>
+          <div class="clapper-row"><span>SCENES</span><strong>6</strong><span>TAKE</span><strong>1</strong></div>
+          <div class="clapper-row"><span>STARRING</span><strong>YOU</strong></div>
+        </div>
+        <button class="btn btn-gold btn-big" id="action-btn" type="button">🎬 Lights, Camera, ACTION!</button>
+        <p class="curtain-hint">Sound on for full filmy effect 🔊</p>
+      </div>
+    </div>
+
+    <!-- Scene progress -->
+    <nav class="progress" id="progress" aria-label="Scene progress">
+      <span class="progress-label" id="progress-label">Scene 1 of 6</span>
+      <ol class="progress-diyas" id="progress-diyas"></ol>
+    </nav>
+    <button class="sound-toggle" id="sound-toggle" type="button" aria-label="Toggle sound">
+      <span id="sound-icon">🔊</span>
+    </button>
+    <audio id="party-audio" loop preload="none" src="assets/party-music.mp3"></audio>
+
+    <div class="sky" id="sky" aria-hidden="true"></div>
+
+    <!-- Scene title card shown between scenes -->
+    <div class="scene-card" id="scene-card" aria-hidden="true">
+      <p class="scene-card-no" id="scene-card-no">Scene 1</p>
+      <p class="scene-card-title" id="scene-card-title">The Invitation</p>
+    </div>
+
+    <main class="film">
+      <!-- Scene 1: Invitation -->
+      <section class="scene" id="scene-invite" data-title="The Invitation">
+        <div class="toran" aria-hidden="true"></div>
+        <div class="lanterns" aria-hidden="true">
+          <span class="lantern l1"></span><span class="lantern l2"></span><span class="lantern l3"></span>
+        </div>
+        <div class="scene-inner">
+          <div class="poster">
+            <div class="poster-bulbs" aria-hidden="true"></div>
+            <p class="presents"><span data-production>SHA-adi</span> Productions presents</p>
+            <h1 class="title">
+              <span class="title-hi">दिवाली</span>
+              <span class="title-main">DHAMAKA</span>
+            </h1>
+            <p class="tagline">A Bollywood Diwali House Party</p>
+            <div class="poster-meta">
+              <span class="chip">📅 1 NOV</span>
+              <span class="chip">⏰ 6 PM ONWARDS</span>
+              <span class="chip chip-hot">👘 TRADITIONAL COMPULSORY</span>
+            </div>
+            <div class="mini-countdown" aria-live="polite">
+              <span><strong data-cd="days">00</strong>Din</span>
+              <span><strong data-cd="hours">00</strong>Ghante</span>
+              <span><strong data-cd="mins">00</strong>Min</span>
+              <span><strong data-cd="secs">00</strong>Sec</span>
+            </div>
+          </div>
+
+          <div class="ticket">
+            <div class="ticket-main">
+              <p class="ticket-kicker">SHOW DETAILS</p>
+              <dl class="ticket-grid">
+                <div><dt>Date</dt><dd data-date>Sun, 1 Nov 2026</dd></div>
+                <div><dt>Showtime</dt><dd data-time>6 PM onwards</dd></div>
+                <div><dt>Theatre</dt><dd id="venue-name">Ghar Pe!</dd></div>
+                <div><dt>Dress</dt><dd>Desi Only 🪔</dd></div>
+              </dl>
+              <p class="ticket-address" id="venue-address"></p>
+              <a class="btn btn-ghost btn-small" id="venue-map" href="#" target="_blank" rel="noopener" hidden>📍 Directions</a>
+            </div>
+            <div class="ticket-stub">
+              <span class="stub-seat">SEAT<br /><strong>VIP</strong></span>
+              <span class="barcode" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <p class="scene-hint">Your real ticket gets printed at the end of this film 🎟️</p>
+          <div class="scene-nav">
+            <button class="btn btn-gold btn-big" type="button" data-next>Next Scene ➜</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 2: Dress code -->
+      <section class="scene" id="scene-dress" data-title="No Ethnic, No Entry" hidden>
+        <div class="scene-inner">
+          <header class="scene-head">
+            <p class="scene-no">Scene 2</p>
+            <h2 class="scene-title">No Ethnic, No Entry</h2>
+            <p class="scene-dialogue">"Pushpa, I hate tears... aur party mein jeans bhi!"</p>
+          </header>
+          <div class="bouncer">
+            <div class="bouncer-head">
+              <span class="bouncer-emoji" aria-hidden="true">🕶️</span>
+              <p>Our bouncer has <strong>zero</strong> chill. Traditional clothes are <strong>COMPULSORY</strong>.</p>
+            </div>
+            <div class="dress-grid">
+              <div class="dress-card ok">✅ Kurta · Sherwani · Bandhgala</div>
+              <div class="dress-card ok">✅ Saree · Lehenga · Anarkali</div>
+              <div class="dress-card nope">❌ Jeans? Picture se bahar.</div>
+              <div class="dress-card bonus">⭐ Best Dressed wins points for their team!</div>
+            </div>
+            <div class="pledge" id="pledge">
+              <button class="btn btn-gold" id="pledge-btn" type="button">✋ I pledge to come in full desi swag</button>
+              <span class="stamp" aria-hidden="true">APPROVED</span>
+            </div>
+            <p class="penalty">Violation penalty: solo dance on <em>"Sheila Ki Jawani"</em> &amp; minus points for your team. 💃</p>
+          </div>
+          <div class="scene-nav">
+            <button class="btn btn-ghost" type="button" data-back>⟵ Back</button>
+            <button class="btn btn-gold" type="button" data-next id="dress-next" disabled>🔒 Take the pledge first</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 3: Audition quiz -->
+      <section class="scene" id="scene-quiz" data-title="The Audition" hidden>
+        <div class="scene-inner">
+          <header class="scene-head">
+            <p class="scene-no">Scene 3</p>
+            <h2 class="scene-title">The Audition</h2>
+            <p class="scene-dialogue">Every right answer = points for your team at the party. One take only. No retakes, director's orders! 🎬</p>
+          </header>
+          <div class="quiz" id="quiz-main">
+            <div class="quiz-card">
+              <div class="quiz-top">
+                <span class="quiz-count">Q1 / 5</span>
+                <span class="quiz-score">⭐ <strong>0</strong> pts</span>
+              </div>
+              <div class="quiz-bar"><span></span></div>
+              <p class="quiz-q"></p>
+              <div class="quiz-options"></div>
+            </div>
+            <div class="quiz-done" hidden>
+              <p class="quiz-done-kicker">Audition Complete</p>
+              <p class="quiz-done-score"><span class="quiz-final">0</span> pts</p>
+              <p class="quiz-verdict"></p>
+              <p class="scene-hint">These points become your team's head start on party night 🏆</p>
+            </div>
+          </div>
+          <div class="scene-nav">
+            <button class="btn btn-ghost" type="button" data-back>⟵ Back</button>
+            <button class="btn btn-gold" type="button" data-next id="quiz-next" disabled>🔒 Finish the audition</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 4: The plot -->
+      <section class="scene" id="scene-plot" data-title="The Plot" hidden>
+        <div class="scene-inner">
+          <header class="scene-head">
+            <p class="scene-no">Scene 4</p>
+            <h2 class="scene-title">The Plot</h2>
+            <p class="scene-dialogue">This isn't just a party. It's a full filmy championship.</p>
+          </header>
+          <ol class="plot-grid">
+            <li class="plot-card"><span class="plot-emoji">🎭</span><strong>Get cast into a team</strong><p>When you RSVP, you're cast into one of four filmy teams.</p></li>
+            <li class="plot-card"><span class="plot-emoji">🧠</span><strong>Head start</strong><p>Your audition points go straight to your team's score.</p></li>
+            <li class="plot-card"><span class="plot-emoji">🕵️</span><strong>Secret mission</strong><p>Once your RSVP is confirmed, your top-secret mission arrives on WhatsApp. Tell no one. Trust no one. 🤫</p></li>
+            <li class="plot-card"><span class="plot-emoji">🎤</span><strong>Party games</strong><p>Antakshari, Dumb Charades, Best Dressed &amp; Dance-off. Live leaderboard on the TV.</p></li>
+            <li class="plot-card"><span class="plot-emoji">🍲</span><strong>Wheel of Kismat</strong><p>The wheel decides what you (and your +1) bring for the potluck.</p></li>
+            <li class="plot-card plot-card-hot"><span class="plot-emoji">🏆</span><strong>The Dhamaka Trophy</strong><p>Highest-scoring team takes home the trophy &amp; eternal bragging rights.</p></li>
+          </ol>
+          <div class="scene-nav">
+            <button class="btn btn-ghost" type="button" data-back>⟵ Back</button>
+            <button class="btn btn-gold" type="button" data-next>I'm in! Casting Call ➜</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 5: RSVP -->
+      <section class="scene" id="scene-rsvp" data-title="Casting Call" hidden>
+        <div class="scene-inner">
+          <header class="scene-head">
+            <p class="scene-no">Scene 5</p>
+            <h2 class="scene-title">Casting Call: Aa Rahe Ho Na?</h2>
+          </header>
+          <form class="rsvp-card" id="rsvp-form" novalidate>
+            <label class="field">
+              <span class="field-label">Your good naam 🎭</span>
+              <input type="text" name="name" maxlength="60" autocomplete="name" placeholder="e.g. Rahul (naam toh suna hoga)" required />
+            </label>
+
+            <fieldset class="field">
+              <legend class="field-label">Your final decision 🎬</legend>
+              <div class="choice-grid choice-grid-3">
+                <label class="choice">
+                  <input type="radio" name="response" value="yes" required />
+                  <span class="choice-card"><span class="choice-emoji">💃</span><strong>Main Aa Raha Hoon!</strong><small>Yes, coming solo</small></span>
+                </label>
+                <label class="choice">
+                  <input type="radio" name="response" value="plusOne" />
+                  <span class="choice-card"><span class="choice-emoji">👯</span><strong>Saath Mein Aayenge</strong><small>Yes, bringing a +1 (partner or friend)</small></span>
+                </label>
+                <label class="choice">
+                  <input type="radio" name="response" value="no" />
+                  <span class="choice-card"><span class="choice-emoji">😢</span><strong>Kabhi Khushi Kabhie Gham</strong><small>Can't make it</small></span>
+                </label>
+              </div>
+              <p class="field-hint">💑 Partner or 🤝 friend, both welcome. Singles, bring a buddy! Just pick the +1 option and RSVP for them right here.</p>
+            </fieldset>
+
+            <div class="when-coming" id="when-coming" hidden>
+              <label class="field">
+                <span class="field-label">Your WhatsApp number 📱</span>
+                <input type="tel" name="phone" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="e.g. 98765 43210" />
+                <small class="field-help">Your secret mission will be WhatsApp'd here once your RSVP is confirmed.</small>
+              </label>
+
+              <label class="field">
+                <span class="field-label">Entry time ⏰</span>
+                <select name="arrivalTime">
+                  <option value="" disabled selected>Choose your entry scene</option>
+                  <option value="6:00 PM">6:00 PM · Sharp, like Big B</option>
+                  <option value="6:30 PM">6:30 PM</option>
+                  <option value="7:00 PM">7:00 PM</option>
+                  <option value="7:30 PM">7:30 PM</option>
+                  <option value="8:00 PM">8:00 PM</option>
+                  <option value="8:30 PM or later">8:30 PM+ · Fashionably late, like SRK</option>
+                </select>
+              </label>
+
+              <fieldset class="field">
+                <legend class="field-label">Your party fuel ☕ <small>(no alcohol, only josh)</small></legend>
+                <div class="choice-grid choice-grid-drinks" data-drinks="drink"></div>
+              </fieldset>
+
+              <div class="field">
+                <span class="field-label">Your star photo for the ticket 📸 <small>(optional)</small></span>
+                <div class="selfie" data-selfie="main">
+                  <span class="selfie-preview">🎭</span>
+                  <label class="btn btn-pink btn-small selfie-btn">
+                    <span class="selfie-btn-text">📸 Click a selfie</span>
+                    <input type="file" accept="image/*" capture="user" />
+                  </label>
+                  <button class="btn btn-ghost btn-small selfie-remove" type="button" hidden>✕ Remove</button>
+                </div>
+              </div>
+
+              <div class="plus-one" id="plus-one" hidden>
+                <p class="plus-one-head">👯 Your +1's details</p>
+                <p class="plus-one-note">You RSVP for them here. They get their own ticket, team, audition &amp; secret mission!</p>
+                <label class="field">
+                  <span class="field-label">+1's name</span>
+                  <input type="text" name="plusOneName" maxlength="60" placeholder="e.g. Simran" />
+                </label>
+                <fieldset class="field">
+                  <legend class="field-label">Who are they to you?</legend>
+                  <div class="choice-grid">
+                    <label class="choice">
+                      <input type="radio" name="plusOneRelation" value="Partner" />
+                      <span class="choice-card choice-sm"><span class="choice-emoji">💑</span><strong>Partner</strong><small>Jodi No. 1</small></span>
+                    </label>
+                    <label class="choice">
+                      <input type="radio" name="plusOneRelation" value="Friend" />
+                      <span class="choice-card choice-sm"><span class="choice-emoji">🤝</span><strong>Friend</strong><small>Jai-Veeru vibes</small></span>
+                    </label>
+                  </div>
+                </fieldset>
+                <label class="field">
+                  <span class="field-label">+1's WhatsApp number <small>(optional, for their secret mission)</small></span>
+                  <input type="tel" name="plusOnePhone" inputmode="tel" maxlength="20" placeholder="Blank = we send it to you" />
+                </label>
+                <fieldset class="field">
+                  <legend class="field-label">+1's party fuel</legend>
+                  <div class="choice-grid choice-grid-drinks" data-drinks="plusOneDrink"></div>
+                </fieldset>
+                <div class="field">
+                  <span class="field-label">+1's star photo 📸 <small>(optional)</small></span>
+                  <div class="selfie" data-selfie="plus">
+                    <span class="selfie-preview">🎭</span>
+                    <label class="btn btn-pink btn-small selfie-btn">
+                      <span class="selfie-btn-text">📸 Click a selfie</span>
+                      <input type="file" accept="image/*" capture="user" />
+                    </label>
+                    <button class="btn btn-ghost btn-small selfie-remove" type="button" hidden>✕ Remove</button>
+                  </div>
+                </div>
+              </div>
+
+              <label class="field">
+                <span class="field-label">Your dance-floor song 🎶 <small>(optional)</small></span>
+                <input type="text" name="songRequest" maxlength="80" placeholder="e.g. Kala Chashma" />
+              </label>
+              <label class="field">
+                <span class="field-label">A movie for Dumb Charades 🤫 <small>(optional, keep it secret!)</small></span>
+                <input type="text" name="charadesMovie" maxlength="80" placeholder="e.g. Andaz Apna Apna" />
+              </label>
+            </div>
+
+            <p class="form-error" id="form-error" role="alert"></p>
+            <button class="btn btn-gold btn-big btn-block" id="submit-btn" type="submit">🎰 Lock Kiya Jaaye &amp; Spin!</button>
+          </form>
+
+          <div class="stage" id="plus-quiz-stage" hidden>
+            <p class="stage-kicker">Co-star's Audition</p>
+            <h3 class="stage-title" id="plus-quiz-title">Hand the phone to your +1 📱</h3>
+            <p class="scene-hint">A different set of questions. Their points go to their own team!</p>
+            <div class="quiz" id="quiz-plus">
+              <div class="quiz-card">
+                <div class="quiz-top">
+                  <span class="quiz-count">Q1 / 5</span>
+                  <span class="quiz-score">⭐ <strong>0</strong> pts</span>
+                </div>
+                <div class="quiz-bar"><span></span></div>
+                <p class="quiz-q"></p>
+                <div class="quiz-options"></div>
+              </div>
+              <div class="quiz-done" hidden>
+                <p class="quiz-done-kicker">Co-star Audition Complete</p>
+                <p class="quiz-done-score"><span class="quiz-final">0</span> pts</p>
+                <p class="quiz-verdict"></p>
+              </div>
+            </div>
+            <button class="btn btn-gold btn-big btn-block" id="plus-quiz-go" type="button" disabled>🔒 Finish the audition</button>
+          </div>
+
+          <div class="scene-nav">
+            <button class="btn btn-ghost" type="button" data-back>⟵ Back</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 6: Climax -->
+      <section class="scene" id="scene-climax" data-title="The Climax" hidden>
+        <div class="scene-inner">
+          <header class="scene-head">
+            <p class="scene-no">Scene 6</p>
+            <h2 class="scene-title" id="climax-title">The Climax</h2>
+          </header>
+
+          <div class="stage" id="wheel-stage" hidden>
+            <p class="stage-kicker" id="wheel-kicker">Wheel of Kismat</p>
+            <h3 class="stage-title" id="wheel-title">Aapki dish decide ho rahi hai...</h3>
+            <div class="wheel-wrap">
+              <div class="wheel-bulbs" aria-hidden="true"></div>
+              <span class="wheel-pointer" id="wheel-pointer" aria-hidden="true"></span>
+              <canvas class="wheel" id="wheel" width="600" height="600" aria-label="Food roulette wheel"></canvas>
+              <span class="wheel-hub" aria-hidden="true">🪔</span>
+            </div>
+            <p class="stage-status" id="wheel-status" aria-live="polite"></p>
+            <div class="wheel-error" id="wheel-error" hidden>
+              <p>Network ne dhoka de diya 💔 Your RSVP didn't reach us.</p>
+              <button class="btn btn-gold" id="retry-btn" type="button">🔁 Try Again</button>
+            </div>
+          </div>
+
+          <div class="stage" id="team-stage" hidden>
+            <p class="stage-kicker">Casting Director's Decision</p>
+            <h3 class="stage-title" id="team-title">You are cast in...</h3>
+            <div class="team-slot" id="team-slot"><span id="team-slot-emoji">🎭</span><strong id="team-slot-name">...</strong></div>
+            <p class="stage-status" id="team-status"></p>
+          </div>
+
+          <div class="stage" id="ticket-stage" hidden>
+            <p class="stage-kicker" id="ticket-kicker">🎟️ Your Official Ticket</p>
+            <div class="tickets" id="tickets"></div>
+            <p class="stage-note">Show your ticket at the door. Team scores go live on the party TV 📺</p>
+            <a class="btn btn-pink" data-whatsapp href="#" target="_blank" rel="noopener" hidden>💬 Ping host</a>
+          </div>
+
+          <div class="stage regret" id="regret-stage" hidden>
+            <p class="stage-kicker">😈 Saza Sunaai Jaati Hai 😈</p>
+            <h3 class="regret-item" id="regret-item"></h3>
+            <p id="regret-sub"></p>
+            <a class="btn btn-pink" data-whatsapp href="#" target="_blank" rel="noopener" hidden>💬 Ping host</a>
+          </div>
+
+          <p class="demo-note" id="demo-note" hidden>⚠️ Demo mode: RSVP endpoint not configured, nothing was sent.</p>
+          <div class="scene-nav" id="climax-nav" hidden>
+            <button class="btn btn-ghost btn-small" id="edit-btn" type="button">✏️ Edit RSVP</button>
+            <button class="btn btn-ghost btn-small" id="new-btn" type="button">➕ RSVP for someone else</button>
+            <button class="btn btn-ghost btn-small" id="replay-btn" type="button">🔁 Replay the film</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

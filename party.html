@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Diwali Dhamaka · Party Control Room</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#12031f" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏆</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Yatra+One&family=Rozha+One&family=Poppins:wght@400;500;600;700;800&family=Monoton&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="party.css" />
+  </head>
+  <body class="party-page">
+    <div class="toran" aria-hidden="true"></div>
+    <main class="control-room">
+      <header class="cr-head">
+        <p class="scene-no">Live from the party</p>
+        <h1 class="cr-title"><span class="title-hi">दिवाली</span> <span>DHAMAKA</span></h1>
+        <p class="cr-sub">🏆 The Dhamaka Trophy Leaderboard</p>
+        <p class="cr-status" id="cr-status">Loading scores...</p>
+      </header>
+
+      <section class="board" id="board" aria-live="polite"></section>
+
+      <section class="ticker" id="ticker" hidden>
+        <p class="ticker-head">Latest action</p>
+        <ul id="ticker-list"></ul>
+      </section>
+
+      <section class="host" id="host" hidden>
+        <div class="host-card">
+          <h2>🎯 Award Points</h2>
+          <p class="host-label">1. Pick a team</p>
+          <div class="host-teams" id="host-teams"></div>
+          <p class="host-label">2. Pick a reason</p>
+          <div class="host-presets" id="host-presets"></div>
+          <form class="host-custom" id="host-custom">
+            <input type="number" name="points" placeholder="Points" step="1" required />
+            <input type="text" name="reason" placeholder="Custom reason" maxlength="60" />
+            <button class="btn btn-gold btn-small" type="submit">Add</button>
+          </form>
+          <p class="host-msg" id="host-msg" role="status"></p>
+        </div>
+
+        <div class="host-card">
+          <h2>📋 Guest Stats</h2>
+          <div class="stat-grid" id="stat-grid"></div>
+          <h3>🍹 Drinks</h3>
+          <ul class="chip-list" id="stat-drinks"></ul>
+          <h3>⏰ Arrivals</h3>
+          <ul class="chip-list" id="stat-arrivals"></ul>
+          <h3>🎶 Dance-floor playlist</h3>
+          <ol class="plain-list" id="stat-songs"></ol>
+          <h3>🤫 Dumb Charades bowl</h3>
+          <ol class="plain-list" id="stat-movies"></ol>
+          <h3>👥 Guest list</h3>
+          <p class="cr-hint">🕵️ Missions are private: open host mode on your own phone, not the TV.</p>
+          <p class="cr-hint cr-hint-warn" id="missions-hint" hidden>No missions yet. Add them to the "Missions" tab of the sheet (one per row; duplicate a row to give it more slots). Guests who already RSVP'd get one on their next update.</p>
+          <div class="table-wrap">
+            <table class="guest-table">
+              <thead>
+                <tr><th>Seat</th><th>Name</th><th>Status</th><th>WhatsApp</th><th>Entry</th><th>Team</th><th>Bringing</th><th>Mission</th><th>Send</th></tr>
+              </thead>
+              <tbody id="stat-guests"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <footer class="cr-foot">
+        <button class="btn btn-ghost btn-small" id="host-toggle" type="button">🔑 Host mode</button>
+        <form class="pin-form" id="pin-form" hidden>
+          <input type="password" name="pin" placeholder="Host PIN" inputmode="numeric" autocomplete="off" required />
+          <button class="btn btn-gold btn-small" type="submit">Unlock</button>
+        </form>
+      </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="config.js"></script>
+    <script src="party.js"></script>
+  </body>
+</html>
