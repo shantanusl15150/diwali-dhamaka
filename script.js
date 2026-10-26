@@ -15,7 +15,6 @@ const STORAGE_KEYS = {
   progress: "dd_progress_v2",
   rsvp: "dd_rsvp_v2",
   selfie: "dd_selfie_v1",
-  selfiePlus: "dd_selfie_plus_v1",
   guest: "dd_guest_v1",
 };
 
@@ -546,7 +545,6 @@ const mountSelfie = (root, storageKey) => {
 const selfies = {};
 const initSelfies = () => {
   selfies.main = mountSelfie(document.querySelector('[data-selfie="main"]'), STORAGE_KEYS.selfie);
-  selfies.plus = mountSelfie(document.querySelector('[data-selfie="plus"]'), STORAGE_KEYS.selfiePlus);
 };
 
 /* ---------- Wheel of Kismat ---------- */
@@ -931,7 +929,7 @@ const RESPONSE_LABELS = {
 
 const WHEEL_COPY = {
   yes: { kicker: "Wheel of Kismat", title: "Aapki dish decide ho rahi hai..." },
-  plusOne: { kicker: "Duo Special Wheel", title: "Aap dono ki dish decide ho rahi hai... 👯" },
+  plusOne: { kicker: "Wheel of Kismat", title: "Aapki dish decide ho rahi hai..." },
   no: { kicker: "Punishment Wheel 😈", title: "Na aane ki saza decide ho rahi hai..." },
 };
 
@@ -969,7 +967,6 @@ const readForm = (form) => {
     plusOneName: ifPlusOne("plusOneName"),
     plusOneRelation: ifPlusOne("plusOneRelation"),
     plusOnePhone: ifPlusOne("plusOnePhone"),
-    plusOneDrink: ifPlusOne("plusOneDrink"),
   };
 };
 
@@ -993,8 +990,7 @@ const validateRsvp = (data) => {
   if (data.response !== "plusOne") return "";
   if (data.plusOneName.length < 2) return "Your +1's naam bhi chahiye 👯";
   if (!data.plusOneRelation) return "Partner or friend? Tell us who you're bringing 💑🤝";
-  if (data.plusOnePhone && !normalizePhone(data.plusOnePhone)) return "That +1 WhatsApp number looks off 📱";
-  if (!data.plusOneDrink) return "Pick your +1's party fuel too ☕🥛🧋";
+  if (data.plusOnePhone && !normalizePhone(data.plusOnePhone)) return "That WhatsApp number looks off 📱";
   return "";
 };
 
@@ -1005,14 +1001,11 @@ const sendRsvp = async (payload) => {
     await delay(1500);
     const previous = storage.get(STORAGE_KEYS.rsvp, null);
     const coming = payload.response !== "no";
-    const withPlusOne = payload.response === "plusOne";
     const seat = previous?.seat ?? `DD-${String(Math.floor(Math.random() * 900) + 100)}`;
     return {
       item: keepOrPick(payload.options, previous?.item),
       team: coming ? keepOrPick(payload.teamOptions, previous?.team) : "",
       seat,
-      plusOneTeam: withPlusOne ? keepOrPick(payload.teamOptions, previous?.plusOneTeam) : "",
-      plusOneSeat: withPlusOne ? `${seat}B` : "",
       demo: true,
     };
   }
@@ -1033,8 +1026,6 @@ const sendRsvp = async (payload) => {
       item: body.item,
       team: body.team || "",
       seat: body.seat || "",
-      plusOneTeam: body.plusOneTeam || "",
-      plusOneSeat: body.plusOneSeat || "",
       demo: false,
     };
   } finally {
@@ -1042,30 +1033,22 @@ const sendRsvp = async (payload) => {
   }
 };
 
-// One entry per ticket holder: the guest, plus their co-star when bringing a +1.
+// One ticket per RSVP. A +1 opens the invite and gets their own ticket when they RSVP.
 const peopleOf = (rsvp) =>
-  [
-    {
-      name: rsvp.name,
-      team: rsvp.team,
-      phone: rsvp.phone,
-      seat: rsvp.seat,
-      drink: rsvp.drink,
-      quizScore: rsvp.quizScore,
-      selfie: selfies.main.get(),
-      coStarOf: "",
-    },
-    rsvp.response === "plusOne" && {
-      name: rsvp.plusOneName,
-      team: rsvp.plusOneTeam,
-      phone: rsvp.plusOnePhone || rsvp.phone,
-      seat: rsvp.plusOneSeat,
-      drink: rsvp.plusOneDrink,
-      quizScore: 0,
-      selfie: selfies.plus.get(),
-      coStarOf: rsvp.name,
-    },
-  ].filter((person) => person && person.team);
+  rsvp.team
+    ? [
+        {
+          name: rsvp.name,
+          team: rsvp.team,
+          phone: rsvp.phone,
+          seat: rsvp.seat,
+          drink: rsvp.drink,
+          quizScore: rsvp.quizScore,
+          selfie: selfies.main.get(),
+          coStarOf: "",
+        },
+      ]
+    : [];
 
 const buildWhatsappLink = (rsvp) => {
   const lines = [
@@ -1075,7 +1058,7 @@ const buildWhatsappLink = (rsvp) => {
     rsvp.arrivalTime && `Arrival: ${rsvp.arrivalTime}`,
     rsvp.drink && `Party fuel: ${rsvp.drink}`,
     rsvp.phone && `WhatsApp: ${rsvp.phone}`,
-    rsvp.plusOneName && `+1: ${rsvp.plusOneName}, ${rsvp.plusOneRelation} (${rsvp.plusOneDrink})`,
+    rsvp.plusOneName && `Bringing: ${rsvp.plusOneName} (${rsvp.plusOneRelation}) — still needs to RSVP`,
     ...peopleOf(rsvp).map((person) => `${person.name}'s team: ${person.team}`),
     `${rsvp.response === "no" ? "Punishment" : "Bringing"}: ${rsvp.item}`,
   ].filter(Boolean);
@@ -1131,7 +1114,6 @@ const initRsvp = () => {
       };
       setRadio("response", rsvp.response);
       setRadio("drink", rsvp.drink);
-      setRadio("plusOneDrink", rsvp.plusOneDrink);
       setRadio("plusOneRelation", rsvp.plusOneRelation);
       ["name", "phone", "arrivalTime", "plusOneName", "plusOnePhone", "songRequest", "charadesMovie"].forEach((key) => {
         form.elements[key].value = rsvp[key] || "";
@@ -1143,7 +1125,7 @@ const initRsvp = () => {
 
   const renderTickets = async (rsvp) => {
     const people = peopleOf(rsvp);
-    $("ticket-kicker").textContent = people.length > 1 ? "🎟️ Your Official Tickets" : "🎟️ Your Official Ticket";
+    $("ticket-kicker").textContent = "🎟️ Your Official Ticket";
 
     const blocks = people.map((person) => {
       const block = el("div", "ticket-block");
@@ -1186,8 +1168,8 @@ const initRsvp = () => {
     if (!show) return;
     $("share-invite-head").textContent = `📲 Share the invite with ${rsvp.plusOneName}`;
     $("share-invite-text").textContent = rsvp.plusOnePhone
-      ? `Opens WhatsApp to ${rsvp.plusOneName} with the invite link ready to send.`
-      : `Opens WhatsApp with the invite link — pick ${rsvp.plusOneName} from your chats.`;
+      ? `Send ${rsvp.plusOneName} the invite so they can RSVP, spin the wheel & get their own ticket.`
+      : `Opens WhatsApp with the invite link — pick ${rsvp.plusOneName}, they RSVP themselves.`;
     const btn = $("share-invite-btn");
     btn.href = buildShareInviteLink(rsvp);
     btn.textContent = `💬 WhatsApp ${rsvp.plusOneName}`;
@@ -1207,7 +1189,7 @@ const initRsvp = () => {
       return;
     }
 
-    $("climax-title").textContent = rsvp.response === "plusOne" ? "The Climax: Your Tickets" : "The Climax: Your Ticket";
+    $("climax-title").textContent = "The Climax: Your Ticket";
     showStage("ticket-stage");
     await renderTickets(rsvp);
     setShareInvite(rsvp);
@@ -1218,7 +1200,6 @@ const initRsvp = () => {
     running = true;
     const data = { ...formData, phone: normalizePhone(formData.phone), plusOnePhone: normalizePhone(formData.plusOnePhone) };
     pending = data;
-    const withPlusOne = data.response === "plusOne";
     const previous = storage.get(STORAGE_KEYS.rsvp, null);
     const options = getWheelOptions(data.response);
     const copy = WHEEL_COPY[data.response];
@@ -1244,7 +1225,6 @@ const initRsvp = () => {
           ...data,
           guestId: getGuestId(),
           quizScore: progress.quiz.score,
-          plusOneQuizScore: 0,
           options,
           teamOptions: CONFIG.teams.map((team) => team.name),
         }),
@@ -1266,10 +1246,10 @@ const initRsvp = () => {
     await wheel.stopAt(index >= 0 ? index : 0);
     $("wheel-stage").classList.remove("is-spinning");
     $("wheel-status").textContent =
-      data.response === "no" ? `😈 ${result.item}!` : `🍲 ${withPlusOne ? "You two are bringing" : "You're bringing"}: ${result.item}!`;
+      data.response === "no" ? `😈 ${result.item}!` : `🍲 You're bringing: ${result.item}!`;
     if (previous?.item === result.item) showToast("🔮", "Kismat nahi badlegi!", " Same as before 😉");
 
-    const saved = { ...data, ...result, quizScore: progress.quiz.score, plusOneQuizScore: 0, savedAt: new Date().toISOString() };
+    const saved = { ...data, ...result, quizScore: progress.quiz.score, savedAt: new Date().toISOString() };
     storage.set(STORAGE_KEYS.rsvp, saved);
     renderProgress();
 
@@ -1325,7 +1305,7 @@ const initRsvp = () => {
   });
 
   $("new-btn").addEventListener("click", () => {
-    [STORAGE_KEYS.rsvp, STORAGE_KEYS.guest, STORAGE_KEYS.selfie, STORAGE_KEYS.selfiePlus].forEach(storage.remove);
+    [STORAGE_KEYS.rsvp, STORAGE_KEYS.guest, STORAGE_KEYS.selfie].forEach(storage.remove);
     progress.quiz = freshQuiz();
     progress.maxReached = 0;
     saveProgress();

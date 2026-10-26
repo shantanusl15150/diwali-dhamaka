@@ -11,6 +11,7 @@
  *    Duplicate rows set the ratio, e.g. 3 "Traitor" rows + 12 "Faithful" rows.
  *    Guests who RSVP'd before missions existed: run assignMissions() once from the editor.
  * After editing this file, use Deploy -> Manage deployments -> Edit -> New version (URL stays the same).
+ * If column layout changed, delete the RSVPs tab (or clear it) and run setup() so headers match.
  */
 
 const RSVP_SHEET = "RSVPs";
@@ -27,20 +28,15 @@ const FIELDS = [
   ["response", "Response"],
   ["arrivalTime", "Arrival Time"],
   ["drink", "Party Fuel"],
-  // Header labels must not start with +, =, - or @ — Sheets treats those as formulas (#ERROR!).
+  // Planning only: the +1 opens the invite and RSVPs as their own guest row.
   ["plusOneName", "Plus One Name"],
   ["plusOneRelation", "Plus One Relation"],
   ["plusOnePhone", "Plus One WhatsApp"],
-  ["plusOneDrink", "Plus One Party Fuel"],
   ["item", "Assigned Item"],
   ["team", "Team"],
   ["mission", "Secret Mission"],
   ["quizScore", "Audition Points"],
   ["seat", "Seat"],
-  ["plusOneTeam", "Plus One Team"],
-  ["plusOneMission", "Plus One Secret Mission"],
-  ["plusOneQuizScore", "Plus One Audition Points"],
-  ["plusOneSeat", "Plus One Seat"],
   ["songRequest", "Song Request"],
   ["charadesMovie", "Charades Movie"],
   ["guestId", "Guest ID"],
@@ -98,15 +94,11 @@ function assignMissions() {
     if (!missions.length) throw new Error("Missions tab is empty");
     const sheet = getSheet_(RSVP_SHEET, HEADERS);
     const rows = readRsvps_(sheet);
-    const counts = countBy_(rows, (row) => [row.mission, row.plusOneMission]);
-    const assign = (row, key) => {
-      if (row[key]) return;
-      row[key] = pickProportional_(missions, counts);
-      counts[row[key]] = (counts[row[key]] || 0) + 1;
-    };
+    const counts = countBy_(rows, (row) => [row.mission]);
     rows.forEach((row) => {
-      if (row.team) assign(row, "mission");
-      if (row.plusOneTeam) assign(row, "plusOneMission");
+      if (!row.team || row.mission) return;
+      row.mission = pickProportional_(missions, counts);
+      counts[row.mission] = (counts[row.mission] || 0) + 1;
     });
     if (rows.length) {
       sheet.getRange(2, 1, rows.length, HEADERS.length).setValues(rows.map((row) => FIELDS.map((field) => safeCell_(row[field[0]]))));
@@ -126,29 +118,20 @@ function saveRsvp_(data) {
   const existing = existingIndex >= 0 ? rows[existingIndex] : null;
   const others = rows.filter((_, i) => i !== existingIndex);
   const attending = rsvp.response !== "no";
-  const withPlusOne = rsvp.response === "plusOne";
 
   const keepIfValid = (options, key) => (existing && options.indexOf(String(existing[key])) >= 0 ? String(existing[key]) : "");
   const keepExisting = (key) => (existing && existing[key] ? String(existing[key]) : "");
 
-  // Every person (guest or +1) is one head, so teams stay balanced by people.
-  const teamCounts = countBy_(others, (row) => [row.team, row.plusOneTeam]);
-  const missionCounts = countBy_(others, (row) => [row.mission, row.plusOneMission]);
+  // One RSVP = one person. A +1 RSVPs separately via the shared invite link.
+  const teamCounts = countBy_(others, (row) => [row.team]);
+  const missionCounts = countBy_(others, (row) => [row.mission]);
   const missions = readMissions_();
 
   const item = keepIfValid(rsvp.options, "item") || pickLeastUsed_(rsvp.options, countBy_(others, (row) => [row.item]));
-
   const team = attending ? keepIfValid(rsvp.teamOptions, "team") || pickLeastUsed_(rsvp.teamOptions, teamCounts) : "";
-  if (team) teamCounts[team] = (teamCounts[team] || 0) + 1;
-  const plusOneTeam = withPlusOne ? keepIfValid(rsvp.teamOptions, "plusOneTeam") || pickLeastUsed_(rsvp.teamOptions, teamCounts) : "";
-
   // Missions are never returned to the guest's browser; the host sends them on WhatsApp.
   const mission = attending ? keepExisting("mission") || pickProportional_(missions, missionCounts) : "";
-  if (mission) missionCounts[mission] = (missionCounts[mission] || 0) + 1;
-  const plusOneMission = withPlusOne ? keepExisting("plusOneMission") || pickProportional_(missions, missionCounts) : "";
-
   const seat = keepExisting("seat") || "DD-" + ("00" + (rows.length + 1)).slice(-3);
-  const plusOneSeat = withPlusOne ? seat + "B" : "";
 
   const record = {
     updatedAt: new Date(),
@@ -160,16 +143,11 @@ function saveRsvp_(data) {
     plusOneName: rsvp.plusOneName,
     plusOneRelation: rsvp.plusOneRelation,
     plusOnePhone: rsvp.plusOnePhone,
-    plusOneDrink: rsvp.plusOneDrink,
     item: item,
     team: team,
     mission: mission,
     quizScore: attending ? rsvp.quizScore : "",
     seat: attending ? seat : "",
-    plusOneTeam: plusOneTeam,
-    plusOneMission: plusOneMission,
-    plusOneQuizScore: withPlusOne ? rsvp.plusOneQuizScore : "",
-    plusOneSeat: plusOneSeat,
     songRequest: rsvp.songRequest,
     charadesMovie: rsvp.charadesMovie,
     guestId: rsvp.guestId,
@@ -183,7 +161,7 @@ function saveRsvp_(data) {
   }
 
   notify_(record, Boolean(existing));
-  return { item: item, team: team, seat: seat, plusOneTeam: plusOneTeam, plusOneSeat: plusOneSeat };
+  return { item: item, team: team, seat: seat };
 }
 
 function parseRsvp_(data) {
@@ -203,11 +181,9 @@ function parseRsvp_(data) {
     plusOneName: text_(data.plusOneName, 60),
     plusOneRelation: text_(data.plusOneRelation, 20),
     plusOnePhone: phone_(data.plusOnePhone),
-    plusOneDrink: text_(data.plusOneDrink, 30),
     songRequest: text_(data.songRequest, 80),
     charadesMovie: text_(data.charadesMovie, 80),
     quizScore: score_(data.quizScore),
-    plusOneQuizScore: score_(data.plusOneQuizScore),
     options: list(data.options),
     teamOptions: list(data.teamOptions),
   };
@@ -273,10 +249,7 @@ function buildLeaderboard_() {
 
   rows
     .filter((row) => row.response !== RESPONSE_LABELS.no)
-    .forEach((row) => {
-      addMember(row.team, row.name, row.quizScore);
-      addMember(row.plusOneTeam, row.plusOneName, row.plusOneQuizScore);
-    });
+    .forEach((row) => addMember(row.team, row.name, row.quizScore));
 
   scores.forEach((row) => {
     if (row[1]) ensure(String(row[1])).party += Number(row[2]) || 0;
@@ -316,22 +289,22 @@ function buildHostStats_() {
 
   coming.forEach((row) => {
     tally(drinks, String(row.drink), 1);
-    tally(drinks, String(row.plusOneDrink), 1);
-    tally(arrivals, String(row.arrivalTime), row.plusOneName ? 2 : 1);
+    tally(arrivals, String(row.arrivalTime), 1);
   });
 
   const fields = [
     "name", "phone", "response", "arrivalTime", "item", "team", "mission", "seat",
-    "plusOneName", "plusOneRelation", "plusOnePhone", "plusOneTeam", "plusOneMission", "plusOneSeat",
+    "plusOneName", "plusOneRelation", "plusOnePhone",
   ];
+  const bringingPlusOne = coming.filter((row) => row.response === RESPONSE_LABELS.plusOne);
 
   return {
     totals: {
       responses: rows.length,
       coming: coming.length,
       notComing: rows.length - coming.length,
-      plusOnes: coming.filter((row) => row.plusOneName).length,
-      headcount: coming.reduce((sum, row) => sum + (row.plusOneName ? 2 : 1), 0),
+      plusOnes: bringingPlusOne.length,
+      headcount: coming.length + bringingPlusOne.length,
     },
     drinks: drinks,
     arrivals: arrivals,
@@ -421,12 +394,8 @@ function notify_(record, isUpdate) {
     record.team && "Team: " + record.team + " (audition " + record.quizScore + " pts)",
     coming && "Secret mission: " + (record.mission || "(Missions tab is empty)"),
     coming && "Seat: " + record.seat,
-    record.plusOneName && "+1: " + record.plusOneName + " (" + record.plusOneRelation + ")",
-    record.plusOnePhone && "+1 WhatsApp: " + record.plusOnePhone,
-    record.plusOneDrink && "+1 Party fuel: " + record.plusOneDrink,
-    record.plusOneTeam && "+1 Team: " + record.plusOneTeam + " (audition " + record.plusOneQuizScore + " pts)",
-    record.plusOneName && "+1 Secret mission: " + (record.plusOneMission || "(Missions tab is empty)"),
-    record.plusOneSeat && "+1 Seat: " + record.plusOneSeat,
+    record.plusOneName && "Planning to bring: " + record.plusOneName + (record.plusOneRelation ? " (" + record.plusOneRelation + ")" : "") + " — they still need to RSVP via the invite link",
+    record.plusOnePhone && "Their WhatsApp (for invite share): " + record.plusOnePhone,
     record.songRequest && "Song request: " + record.songRequest,
     record.charadesMovie && "Charades movie: " + record.charadesMovie,
   ].filter(Boolean);

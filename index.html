@@ -186,7 +186,7 @@
             <li class="plot-card"><span class="plot-emoji">🧠</span><strong>Head start</strong><p>Your audition points go straight to your team's score.</p></li>
             <li class="plot-card"><span class="plot-emoji">🕵️</span><strong>Secret mission</strong><p>Once your RSVP is confirmed, your top-secret mission arrives on WhatsApp. Tell no one. Trust no one. 🤫</p></li>
             <li class="plot-card"><span class="plot-emoji">🎤</span><strong>Party games</strong><p>Antakshari, Dumb Charades, Best Dressed &amp; Dance-off. Live leaderboard on the TV.</p></li>
-            <li class="plot-card"><span class="plot-emoji">🍲</span><strong>Wheel of Kismat</strong><p>The wheel decides what you (and your +1) bring for the potluck.</p></li>
+            <li class="plot-card"><span class="plot-emoji">🍲</span><strong>Wheel of Kismat</strong><p>The wheel decides what you bring for the potluck. Your +1 spins their own when they RSVP.</p></li>
             <li class="plot-card plot-card-hot"><span class="plot-emoji">🏆</span><strong>The Dhamaka Trophy</strong><p>Highest-scoring team takes home the trophy &amp; eternal bragging rights.</p></li>
           </ol>
           <div class="scene-nav">
@@ -225,7 +225,7 @@
                   <span class="choice-card"><span class="choice-emoji">😢</span><strong>Kabhi Khushi Kabhie Gham</strong><small>Can't make it</small></span>
                 </label>
               </div>
-              <p class="field-hint">💑 Partner or 🤝 friend, both welcome. Singles, bring a buddy! Just pick the +1 option and RSVP for them right here.</p>
+              <p class="field-hint">💑 Partner or 🤝 friend, both welcome. Singles, bring a buddy! You RSVP for yourself, then WhatsApp them the invite so they can grab their own ticket.</p>
             </fieldset>
 
             <div class="when-coming" id="when-coming" hidden>
@@ -266,10 +266,10 @@
               </div>
 
               <div class="plus-one" id="plus-one" hidden>
-                <p class="plus-one-head">👯 Your +1's details</p>
-                <p class="plus-one-note">You RSVP for them here. They get their own ticket, team &amp; secret mission. After you finish, share the invite with them on WhatsApp.</p>
+                <p class="plus-one-head">👯 Who are you bringing?</p>
+                <p class="plus-one-note">Just their name for our headcount. After you finish, share the invite — they RSVP, get a ticket, team &amp; mission themselves.</p>
                 <label class="field">
-                  <span class="field-label">+1's name</span>
+                  <span class="field-label">Their name</span>
                   <input type="text" name="plusOneName" maxlength="60" placeholder="e.g. Simran" />
                 </label>
                 <fieldset class="field">
@@ -286,24 +286,9 @@
                   </div>
                 </fieldset>
                 <label class="field">
-                  <span class="field-label">+1's WhatsApp number <small>(optional, for their secret mission)</small></span>
-                  <input type="tel" name="plusOnePhone" inputmode="tel" maxlength="20" placeholder="Blank = we send it to you" />
+                  <span class="field-label">Their WhatsApp <small>(optional — so share opens their chat)</small></span>
+                  <input type="tel" name="plusOnePhone" inputmode="tel" maxlength="20" placeholder="e.g. 98765 43210" />
                 </label>
-                <fieldset class="field">
-                  <legend class="field-label">+1's party fuel</legend>
-                  <div class="choice-grid choice-grid-drinks" data-drinks="plusOneDrink"></div>
-                </fieldset>
-                <div class="field">
-                  <span class="field-label">+1's star photo 📸 <small>(optional)</small></span>
-                  <div class="selfie" data-selfie="plus">
-                    <span class="selfie-preview">🎭</span>
-                    <label class="btn btn-pink btn-small selfie-btn">
-                      <span class="selfie-btn-text">📸 Click a selfie</span>
-                      <input type="file" accept="image/*" capture="user" />
-                    </label>
-                    <button class="btn btn-ghost btn-small selfie-remove" type="button" hidden>✕ Remove</button>
-                  </div>
-                </div>
               </div>
 
               <label class="field">

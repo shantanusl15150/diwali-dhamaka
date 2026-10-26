@@ -142,9 +142,9 @@ const renderHostStats = (stats) => {
   const totals = stats.totals;
   $("stat-grid").replaceChildren(
     ...[
-      ["👥 Headcount", totals.headcount],
-      ["✅ Coming", totals.coming],
-      ["👫 +1s", totals.plusOnes],
+      ["👥 Expected", totals.headcount],
+      ["✅ RSVPs in", totals.coming],
+      ["📲 +1s invited", totals.plusOnes],
       ["😢 Not coming", totals.notComing],
     ].map(([label, value]) => {
       const card = el("div", "stat");
@@ -164,31 +164,18 @@ const renderHostStats = (stats) => {
   fillList("stat-movies", stats.movies);
 
   $("missions-hint").hidden = stats.missionsConfigured !== 0;
-  const people = stats.guests.flatMap((guest) => [
-    { ...guest, status: guest.response },
-    ...(guest.plusOneName
-      ? [
-          {
-            seat: guest.plusOneSeat,
-            name: guest.plusOneName,
-            status: `+1 (${guest.plusOneRelation || "guest"}) of ${guest.name}`,
-            phone: guest.plusOnePhone || guest.phone,
-            arrivalTime: guest.arrivalTime,
-            team: guest.plusOneTeam,
-            item: guest.item,
-            mission: guest.plusOneMission,
-          },
-        ]
-      : []),
-  ]);
   $("stat-guests").replaceChildren(
-    ...people.map((person) => {
+    ...stats.guests.map((guest) => {
+      const plus =
+        guest.plusOneName
+          ? `${guest.plusOneName}${guest.plusOneRelation ? ` (${guest.plusOneRelation})` : ""}${guest.response?.includes("+1") ? " · pending RSVP" : ""}`
+          : "";
       const tr = el("tr");
-      [person.seat, person.name, person.status, person.phone, person.arrivalTime, person.team, person.item, person.mission].forEach(
+      [guest.seat, guest.name, guest.response, guest.phone, guest.arrivalTime, guest.team, guest.item, plus, guest.mission].forEach(
         (value) => tr.append(el("td", "", value || "-"))
       );
       const action = el("td");
-      const link = missionLink(person);
+      const link = missionLink(guest);
       if (link) {
         const btn = el("a", "btn btn-gold btn-small", "💬 Send");
         btn.href = link;

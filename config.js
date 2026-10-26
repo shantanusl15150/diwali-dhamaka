@@ -55,7 +55,7 @@ window.PARTY_CONFIG = {
     { name: "Team Poo", emoji: "💅", color: "#9b72cf" },
   ],
 
-  // Party-fuel choices (no alcohol). Shown for the guest and their +1.
+  // Party-fuel choices (no alcohol).
   drinks: [
     { value: "Masala Chai", emoji: "☕", tag: "Tapri mode" },
     { value: "Thandai", emoji: "🥛", tag: "Shahi mode" },
@@ -82,7 +82,7 @@ window.PARTY_CONFIG = {
   inviteUrl: "https://shantanusl15150.github.io/diwali-dhamaka/",
   // WhatsApp text when sharing the invite with a +1. {from}, {to}, {url} are filled in.
   shareInviteMessage:
-    "🪔 *Diwali Dhamaka*\n\n{from} has cast you as their +1 for 1 Nov! Open the invite, enjoy the film & save your ticket:\n\n{url}\n\nTraditional attire compulsory ✨",
+    "🪔 *Diwali Dhamaka*\n\n{from} wants you as their +1 on 1 Nov! Open the invite, do the quiz, RSVP & grab your own ticket:\n\n{url}\n\nTraditional attire compulsory ✨",
 
   // Audition quiz (10 Qs: 5 easy, 3 medium, 2 hard). Each correct answer = pointsPerAnswer for the guest's team.
   quiz: {
