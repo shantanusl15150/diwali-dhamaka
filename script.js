@@ -47,7 +47,6 @@ const storage = {
 
 const freshQuiz = () => ({ index: 0, score: 0, done: false });
 const progress = storage.get(STORAGE_KEYS.progress, { maxReached: 0, pledged: false, quiz: freshQuiz() });
-progress.quizPlusOne ??= freshQuiz();
 const saveProgress = () => storage.set(STORAGE_KEYS.progress, progress);
 
 /* ---------- Sound (synthesised, no assets needed) ---------- */
@@ -390,8 +389,13 @@ const initPledge = () => {
   });
 };
 
-/* ---------- Audition quiz (main guest in scene 3, +1 in scene 5) ---------- */
+/* ---------- Audition quiz (main guest, scene 3) ---------- */
 const mountQuiz = (root, { questions, pointsPerAnswer }, state, onDone) => {
+  // Old progress can be shorter than the current question list; start that guest over.
+  if (state.index > questions.length || (state.done && state.index !== questions.length)) {
+    Object.assign(state, freshQuiz());
+    saveProgress();
+  }
   const maxScore = questions.length * pointsPerAnswer;
   const part = (selector) => root.querySelector(selector);
   const optionsEl = part(".quiz-options");
@@ -1057,7 +1061,7 @@ const peopleOf = (rsvp) =>
       phone: rsvp.plusOnePhone || rsvp.phone,
       seat: rsvp.plusOneSeat,
       drink: rsvp.plusOneDrink,
-      quizScore: rsvp.plusOneQuizScore,
+      quizScore: 0,
       selfie: selfies.plus.get(),
       coStarOf: rsvp.name,
     },
@@ -1078,14 +1082,24 @@ const buildWhatsappLink = (rsvp) => {
   return `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(lines.join("\n"))}`;
 };
 
+const inviteUrl = () => CONFIG.inviteUrl || `${location.origin}${location.pathname.replace(/party\.html$/, "")}`;
+
+const buildShareInviteLink = (rsvp) => {
+  const fill = { from: rsvp.name, to: rsvp.plusOneName, url: inviteUrl() };
+  const text = (CONFIG.shareInviteMessage || "{from} invited you to Diwali Dhamaka: {url}").replace(
+    /\{(\w+)\}/g,
+    (_, key) => fill[key] ?? ""
+  );
+  const digits = String(rsvp.plusOnePhone || "").replace(/\D/g, "");
+  return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+};
 
 const initRsvp = () => {
   const form = $("rsvp-form");
-  const plusQuizStage = $("plus-quiz-stage");
-  const plusQuizGo = $("plus-quiz-go");
   const errorEl = $("form-error");
   const submitBtn = $("submit-btn");
   const pointer = $("wheel-pointer");
+  const shareInvite = $("share-invite");
   const stages = ["wheel-stage", "team-stage", "ticket-stage", "regret-stage"].map($);
   let pending = null;
   let running = false;
@@ -1095,36 +1109,17 @@ const initRsvp = () => {
     restartAnimation(pointer, "is-tick");
   });
 
-  mountQuiz($("quiz-plus"), CONFIG.quizPlusOne, progress.quizPlusOne, () => {
-    plusQuizGo.disabled = false;
-    plusQuizGo.textContent = "🎰 Lock Kiya Jaaye & Spin!";
-  });
-
   const showStage = (id) => stages.forEach((stage) => (stage.hidden = stage.id !== id));
 
   const showForm = () => {
     form.hidden = false;
-    plusQuizStage.hidden = true;
-  };
-
-  const showPlusQuiz = (data) => {
-    form.hidden = true;
-    plusQuizStage.hidden = false;
-    $("plus-quiz-title").textContent = `${data.plusOneName}'s turn! ${data.name}, hand over the phone 📱`;
-    window.scrollTo(0, 0);
-    sound.whoosh();
   };
 
   const updateConditionalFields = () => {
     const response = form.elements.response.value;
     $("when-coming").hidden = !(response === "yes" || response === "plusOne");
     $("plus-one").hidden = response !== "plusOne";
-    submitBtn.textContent =
-      response === "no"
-        ? "😢 Send Regrets & Face the Wheel"
-        : response === "plusOne" && !progress.quizPlusOne.done
-          ? "🎬 Next: Co-star's Audition"
-          : "🎰 Lock Kiya Jaaye & Spin!";
+    submitBtn.textContent = response === "no" ? "😢 Send Regrets & Face the Wheel" : "🎰 Lock Kiya Jaaye & Spin!";
   };
 
   const fillForm = (rsvp) => {
@@ -1185,6 +1180,19 @@ const initRsvp = () => {
       if (CONFIG.whatsappNumber) link.href = buildWhatsappLink(rsvp);
     });
 
+  const setShareInvite = (rsvp) => {
+    const show = rsvp.response === "plusOne" && rsvp.plusOneName;
+    shareInvite.hidden = !show;
+    if (!show) return;
+    $("share-invite-head").textContent = `📲 Share the invite with ${rsvp.plusOneName}`;
+    $("share-invite-text").textContent = rsvp.plusOnePhone
+      ? `Opens WhatsApp to ${rsvp.plusOneName} with the invite link ready to send.`
+      : `Opens WhatsApp with the invite link — pick ${rsvp.plusOneName} from your chats.`;
+    const btn = $("share-invite-btn");
+    btn.href = buildShareInviteLink(rsvp);
+    btn.textContent = `💬 WhatsApp ${rsvp.plusOneName}`;
+  };
+
   const showFinal = async (rsvp) => {
     $("demo-note").hidden = !rsvp.demo;
     $("climax-nav").hidden = false;
@@ -1194,6 +1202,7 @@ const initRsvp = () => {
       $("climax-title").textContent = "Kabhi Khushi Kabhie Gham";
       $("regret-item").textContent = rsvp.item;
       $("regret-sub").textContent = `We'll miss you, ${rsvp.name}! Your punishment has been noted 😜`;
+      shareInvite.hidden = true;
       showStage("regret-stage");
       return;
     }
@@ -1201,6 +1210,7 @@ const initRsvp = () => {
     $("climax-title").textContent = rsvp.response === "plusOne" ? "The Climax: Your Tickets" : "The Climax: Your Ticket";
     showStage("ticket-stage");
     await renderTickets(rsvp);
+    setShareInvite(rsvp);
   };
 
   const run = async (formData) => {
@@ -1209,7 +1219,6 @@ const initRsvp = () => {
     const data = { ...formData, phone: normalizePhone(formData.phone), plusOnePhone: normalizePhone(formData.plusOnePhone) };
     pending = data;
     const withPlusOne = data.response === "plusOne";
-    const plusOneQuizScore = withPlusOne ? progress.quizPlusOne.score : 0;
     const previous = storage.get(STORAGE_KEYS.rsvp, null);
     const options = getWheelOptions(data.response);
     const copy = WHEEL_COPY[data.response];
@@ -1235,7 +1244,7 @@ const initRsvp = () => {
           ...data,
           guestId: getGuestId(),
           quizScore: progress.quiz.score,
-          plusOneQuizScore,
+          plusOneQuizScore: 0,
           options,
           teamOptions: CONFIG.teams.map((team) => team.name),
         }),
@@ -1260,7 +1269,7 @@ const initRsvp = () => {
       data.response === "no" ? `😈 ${result.item}!` : `🍲 ${withPlusOne ? "You two are bringing" : "You're bringing"}: ${result.item}!`;
     if (previous?.item === result.item) showToast("🔮", "Kismat nahi badlegi!", " Same as before 😉");
 
-    const saved = { ...data, ...result, quizScore: progress.quiz.score, plusOneQuizScore, savedAt: new Date().toISOString() };
+    const saved = { ...data, ...result, quizScore: progress.quiz.score, plusOneQuizScore: 0, savedAt: new Date().toISOString() };
     storage.set(STORAGE_KEYS.rsvp, saved);
     renderProgress();
 
@@ -1300,15 +1309,8 @@ const initRsvp = () => {
       sound.buzz();
       return;
     }
-    if (data.response === "plusOne" && !progress.quizPlusOne.done) {
-      pending = data;
-      showPlusQuiz(data);
-      return;
-    }
     run(data);
   });
-
-  plusQuizGo.addEventListener("click", () => pending && run(pending));
 
   $("retry-btn").addEventListener("click", () => {
     if (!pending) return;
@@ -1325,7 +1327,6 @@ const initRsvp = () => {
   $("new-btn").addEventListener("click", () => {
     [STORAGE_KEYS.rsvp, STORAGE_KEYS.guest, STORAGE_KEYS.selfie, STORAGE_KEYS.selfiePlus].forEach(storage.remove);
     progress.quiz = freshQuiz();
-    progress.quizPlusOne = freshQuiz();
     progress.maxReached = 0;
     saveProgress();
     window.location.reload();

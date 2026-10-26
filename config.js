@@ -78,27 +78,29 @@ window.PARTY_CONFIG = {
     { label: "Dress code violation", points: -20 },
   ],
 
-  // Audition quiz. Each correct answer = pointsPerAnswer for the guest's team.
+  // Public invite URL used in the +1 WhatsApp share.
+  inviteUrl: "https://shantanusl15150.github.io/diwali-dhamaka/",
+  // WhatsApp text when sharing the invite with a +1. {from}, {to}, {url} are filled in.
+  shareInviteMessage:
+    "🪔 *Diwali Dhamaka*\n\n{from} has cast you as their +1 for 1 Nov! Open the invite, enjoy the film & save your ticket:\n\n{url}\n\nTraditional attire compulsory ✨",
+
+  // Audition quiz (10 Qs: 5 easy, 3 medium, 2 hard). Each correct answer = pointsPerAnswer for the guest's team.
   quiz: {
     pointsPerAnswer: 10,
     questions: [
+      // Easy
       { q: "Complete the dialogue: \"Kitne aadmi ___?\"", options: ["hain", "the", "aaye", "bache"], answer: 1 },
       { q: "\"Mogambo khush hua\" is from which film?", options: ["Shaan", "Mr. India", "Karan Arjun", "Tridev"], answer: 1 },
-      { q: "Which village does Gabbar Singh terrorise in Sholay?", options: ["Rampur", "Ramgarh", "Sitapur", "Chandanpur"], answer: 1 },
       { q: "Who played Geet in Jab We Met?", options: ["Kareena Kapoor", "Priyanka Chopra", "Katrina Kaif", "Deepika Padukone"], answer: 0 },
       { q: "Diwali celebrates Lord Rama's return to which city?", options: ["Mathura", "Kashi", "Ayodhya", "Dwarka"], answer: 2 },
-    ],
-  },
-
-  // Separate audition for the +1, so they can't copy the main guest's answers.
-  quizPlusOne: {
-    pointsPerAnswer: 10,
-    questions: [
-      { q: "\"Mere paas maa hai\" is from which film?", options: ["Deewaar", "Sholay", "Zanjeer", "Trishul"], answer: 0 },
-      { q: "In DDLJ, what is Simran's father's name?", options: ["Ajit Singh", "Baldev Singh", "Kuljeet Singh", "Harnam Singh"], answer: 1 },
-      { q: "Which film has the song \"Gallan Goodiyaan\"?", options: ["ZNMD", "Kapoor & Sons", "Dil Dhadakne Do", "Bang Bang"], answer: 2 },
-      { q: "Who says \"Pushpa, I hate tears\"?", options: ["Amitabh Bachchan", "Dharmendra", "Rajesh Khanna", "Dev Anand"], answer: 2 },
       { q: "Which goddess is worshipped on Diwali for wealth & prosperity?", options: ["Saraswati", "Lakshmi", "Durga", "Parvati"], answer: 1 },
+      // Medium
+      { q: "Which village does Gabbar Singh terrorise in Sholay?", options: ["Rampur", "Ramgarh", "Sitapur", "Chandanpur"], answer: 1 },
+      { q: "\"Mere paas maa hai\" is from which film?", options: ["Deewaar", "Sholay", "Zanjeer", "Trishul"], answer: 0 },
+      { q: "Who says \"Pushpa, I hate tears\"?", options: ["Amitabh Bachchan", "Dharmendra", "Rajesh Khanna", "Dev Anand"], answer: 2 },
+      // Hard
+      { q: "Which film has the song \"Gallan Goodiyaan\"?", options: ["ZNMD", "Kapoor & Sons", "Dil Dhadakne Do", "Bang Bang"], answer: 2 },
+      { q: "In 3 Idiots, what is Rancho's real name?", options: ["Virus", "Chatur", "Phunsukh Wangdu", "Farhan Qureshi"], answer: 2 },
     ],
   },
 };

@@ -1561,6 +1561,29 @@ a {
   opacity: 0.85;
 }
 
+.share-invite {
+  width: min(420px, 100%);
+  padding: 1.1rem 1.2rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 201, 74, 0.35);
+  background: rgba(255, 201, 74, 0.07);
+  display: grid;
+  gap: 0.55rem;
+  justify-items: center;
+  text-align: center;
+}
+
+.share-invite-head {
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.share-invite-text {
+  font-size: 0.88rem;
+  opacity: 0.85;
+  max-width: 36ch;
+}
+
 .stage-note {
   font-size: 0.85rem;
   opacity: 0.75;

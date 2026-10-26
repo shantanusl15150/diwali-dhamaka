@@ -147,12 +147,12 @@
           <header class="scene-head">
             <p class="scene-no">Scene 3</p>
             <h2 class="scene-title">The Audition</h2>
-            <p class="scene-dialogue">Every right answer = points for your team at the party. One take only. No retakes, director's orders! 🎬</p>
+            <p class="scene-dialogue">10 questions · 5 easy, 3 medium, 2 hard. Every right answer = points for your team. One take only! 🎬</p>
           </header>
           <div class="quiz" id="quiz-main">
             <div class="quiz-card">
               <div class="quiz-top">
-                <span class="quiz-count">Q1 / 5</span>
+                <span class="quiz-count">Q1 / 10</span>
                 <span class="quiz-score">⭐ <strong>0</strong> pts</span>
               </div>
               <div class="quiz-bar"><span></span></div>
@@ -267,7 +267,7 @@
 
               <div class="plus-one" id="plus-one" hidden>
                 <p class="plus-one-head">👯 Your +1's details</p>
-                <p class="plus-one-note">You RSVP for them here. They get their own ticket, team, audition &amp; secret mission!</p>
+                <p class="plus-one-note">You RSVP for them here. They get their own ticket, team &amp; secret mission. After you finish, share the invite with them on WhatsApp.</p>
                 <label class="field">
                   <span class="field-label">+1's name</span>
                   <input type="text" name="plusOneName" maxlength="60" placeholder="e.g. Simran" />
@@ -320,29 +320,6 @@
             <button class="btn btn-gold btn-big btn-block" id="submit-btn" type="submit">🎰 Lock Kiya Jaaye &amp; Spin!</button>
           </form>
 
-          <div class="stage" id="plus-quiz-stage" hidden>
-            <p class="stage-kicker">Co-star's Audition</p>
-            <h3 class="stage-title" id="plus-quiz-title">Hand the phone to your +1 📱</h3>
-            <p class="scene-hint">A different set of questions. Their points go to their own team!</p>
-            <div class="quiz" id="quiz-plus">
-              <div class="quiz-card">
-                <div class="quiz-top">
-                  <span class="quiz-count">Q1 / 5</span>
-                  <span class="quiz-score">⭐ <strong>0</strong> pts</span>
-                </div>
-                <div class="quiz-bar"><span></span></div>
-                <p class="quiz-q"></p>
-                <div class="quiz-options"></div>
-              </div>
-              <div class="quiz-done" hidden>
-                <p class="quiz-done-kicker">Co-star Audition Complete</p>
-                <p class="quiz-done-score"><span class="quiz-final">0</span> pts</p>
-                <p class="quiz-verdict"></p>
-              </div>
-            </div>
-            <button class="btn btn-gold btn-big btn-block" id="plus-quiz-go" type="button" disabled>🔒 Finish the audition</button>
-          </div>
-
           <div class="scene-nav">
             <button class="btn btn-ghost" type="button" data-back>⟵ Back</button>
           </div>
@@ -383,6 +360,11 @@
           <div class="stage" id="ticket-stage" hidden>
             <p class="stage-kicker" id="ticket-kicker">🎟️ Your Official Ticket</p>
             <div class="tickets" id="tickets"></div>
+            <div class="share-invite" id="share-invite" hidden>
+              <p class="share-invite-head" id="share-invite-head">📲 Share the invite with your +1</p>
+              <p class="share-invite-text" id="share-invite-text"></p>
+              <a class="btn btn-gold btn-big" id="share-invite-btn" href="#" target="_blank" rel="noopener">💬 WhatsApp the invite</a>
+            </div>
             <p class="stage-note">Show your ticket at the door. Team scores go live on the party TV 📺</p>
             <a class="btn btn-pink" data-whatsapp href="#" target="_blank" rel="noopener" hidden>💬 Ping host</a>
           </div>
