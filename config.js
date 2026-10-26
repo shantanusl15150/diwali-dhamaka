@@ -17,26 +17,37 @@ window.PARTY_CONFIG = {
   // Optional backup channel, digits only with country code, e.g. "919876543210".
   whatsappNumber: "917506662251",
 
-  // Wheel options per RSVP choice. Replace with the final food list.
+  // Potluck items. Assigned least-used first (no repeats until every item has been given once).
+  // drinkItems are used for soft couple balancing: prefer one food + one drink when a pair RSVPs.
+  bringFood: [
+    "Paneer tikka",
+    "Mini samosas",
+    "Dhokla",
+    "Hara bhara kebabs",
+    "Mini spring rolls",
+    "Masala corn",
+    "Roasted makhana",
+    "Nachos with salsa and dip",
+    "Chips with dips",
+    "Mini sandwiches",
+    "Mini idlis",
+    "Khandvi",
+    "Mini kachoris",
+    "Veg cutlets",
+  ],
+  bringDrinks: [
+    "Nimbu pudina soda",
+    "Virgin mojito",
+    "Blue lagoon mocktail",
+    "Watermelon cooler",
+    "Aam panna",
+    "Iced tea",
+    "Soft drinks",
+  ],
+  bringNote: "Please bring your item ready to serve, along with any dips or accompaniments needed. ❤️",
+
+  // Punishments for "can't make it". Attending guests use bringFood + bringDrinks on the wheel.
   wheels: {
-    yes: [
-      "Kaju Katli",
-      "Samosa",
-      "Dhokla",
-      "Gulab Jamun",
-      "Chips & Dips",
-      "Paneer Tikka",
-      "Soft Drinks",
-      "Namkeen Mix",
-    ],
-    plusOne: [
-      "Pav Bhaji",
-      "Chole Bhature",
-      "Biryani",
-      "Pizza Party",
-      "Dessert Platter",
-      "Chaat Counter",
-    ],
     no: [
       "Send a box of mithai",
       "Owe us a dance",

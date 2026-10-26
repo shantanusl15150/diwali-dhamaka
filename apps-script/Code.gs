@@ -126,8 +126,16 @@ function saveRsvp_(data) {
   const teamCounts = countBy_(others, (row) => [row.team]);
   const missionCounts = countBy_(others, (row) => [row.mission]);
   const missions = readMissions_();
+  const itemCounts = countBy_(others, (row) => [row.item]);
 
-  const item = keepIfValid(rsvp.options, "item") || pickLeastUsed_(rsvp.options, countBy_(others, (row) => [row.item]));
+  // Never repeat an item until every option has been given once (then a new round starts).
+  // Soft couple rule: if their partner already has food or drink, prefer the opposite kind.
+  const partnerItem = attending ? findPartnerItem_(rsvp, others) : "";
+  const item =
+    keepIfValid(rsvp.options, "item") ||
+    (attending
+      ? pickBringItem_(rsvp.options, itemCounts, partnerItem, rsvp.drinkOptions)
+      : pickLeastUsed_(rsvp.options, itemCounts));
   const team = attending ? keepIfValid(rsvp.teamOptions, "team") || pickLeastUsed_(rsvp.teamOptions, teamCounts) : "";
   // Missions are never returned to the guest's browser; the host sends them on WhatsApp.
   const mission = attending ? keepExisting("mission") || pickProportional_(missions, missionCounts) : "";
@@ -185,6 +193,7 @@ function parseRsvp_(data) {
     charadesMovie: text_(data.charadesMovie, 80),
     quizScore: score_(data.quizScore),
     options: list(data.options),
+    drinkOptions: list(data.drinkOptions),
     teamOptions: list(data.teamOptions),
   };
 
@@ -193,6 +202,7 @@ function parseRsvp_(data) {
   if (!RESPONSE_LABELS[rsvp.response]) throw new Error("Invalid response");
   if (!rsvp.options.length) throw new Error("No wheel options");
   if (rsvp.response !== "no" && !rsvp.phone) throw new Error("Missing WhatsApp number");
+  if (rsvp.response === "plusOne" && !rsvp.plusOnePhone) throw new Error("Missing +1 WhatsApp number");
   if (rsvp.response !== "no" && !rsvp.teamOptions.length) throw new Error("No teams configured");
   return rsvp;
 }
@@ -212,6 +222,37 @@ function pickLeastUsed_(options, counts) {
   if (!options.length) return "";
   const min = Math.min.apply(null, options.map((option) => counts[option] || 0));
   const candidates = options.filter((option) => (counts[option] || 0) === min);
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+function sameName_(a, b) {
+  return String(a || "")
+    .trim()
+    .toLowerCase() === String(b || "").trim().toLowerCase();
+}
+
+// Link couples across two RSVPs: either I listed them as my +1, or someone listed me.
+function findPartnerItem_(rsvp, others) {
+  if (rsvp.plusOneName) {
+    const partner = others.find((row) => sameName_(row.name, rsvp.plusOneName) && row.item);
+    if (partner) return String(partner.item);
+  }
+  const host = others.find((row) => sameName_(row.plusOneName, rsvp.name) && row.item);
+  return host ? String(host.item) : "";
+}
+
+// Soft preference: among least-used items, favour the opposite of the partner's food/drink kind.
+function pickBringItem_(options, counts, partnerItem, drinkOptions) {
+  if (!options.length) return "";
+  const min = Math.min.apply(null, options.map((option) => counts[option] || 0));
+  let candidates = options.filter((option) => (counts[option] || 0) === min);
+  if (partnerItem && drinkOptions && drinkOptions.length) {
+    const drinks = {};
+    drinkOptions.forEach((drink) => (drinks[drink] = true));
+    const partnerIsDrink = Boolean(drinks[partnerItem]);
+    const preferred = candidates.filter((option) => Boolean(drinks[option]) !== partnerIsDrink);
+    if (preferred.length) candidates = preferred;
+  }
   return candidates[Math.floor(Math.random() * candidates.length)];
 }
 

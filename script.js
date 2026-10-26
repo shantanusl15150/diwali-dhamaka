@@ -935,9 +935,11 @@ const WHEEL_COPY = {
 
 const cleanList = (list) => (list ?? []).map((item) => String(item).trim()).filter(Boolean);
 
+const bringOptions = () => [...cleanList(CONFIG.bringFood), ...cleanList(CONFIG.bringDrinks)];
+
 const getWheelOptions = (response) => {
-  const options = cleanList(CONFIG.wheels[response]);
-  return options.length ? options : cleanList(CONFIG.wheels.yes);
+  if (response === "no") return cleanList(CONFIG.wheels?.no);
+  return bringOptions();
 };
 
 const getGuestId = () => {
@@ -990,7 +992,7 @@ const validateRsvp = (data) => {
   if (data.response !== "plusOne") return "";
   if (data.plusOneName.length < 2) return "Your +1's naam bhi chahiye 👯";
   if (!data.plusOneRelation) return "Partner or friend? Tell us who you're bringing 💑🤝";
-  if (data.plusOnePhone && !normalizePhone(data.plusOnePhone)) return "That WhatsApp number looks off 📱";
+  if (!normalizePhone(data.plusOnePhone)) return "Their WhatsApp number is compulsory so we can share the invite 📱";
   return "";
 };
 
@@ -1167,9 +1169,7 @@ const initRsvp = () => {
     shareInvite.hidden = !show;
     if (!show) return;
     $("share-invite-head").textContent = `📲 Share the invite with ${rsvp.plusOneName}`;
-    $("share-invite-text").textContent = rsvp.plusOnePhone
-      ? `Send ${rsvp.plusOneName} the invite so they can RSVP, spin the wheel & get their own ticket.`
-      : `Opens WhatsApp with the invite link — pick ${rsvp.plusOneName}, they RSVP themselves.`;
+    $("share-invite-text").textContent = `Send ${rsvp.plusOneName} the invite so they can RSVP, spin the wheel & get their own ticket.`;
     const btn = $("share-invite-btn");
     btn.href = buildShareInviteLink(rsvp);
     btn.textContent = `💬 WhatsApp ${rsvp.plusOneName}`;
@@ -1191,6 +1191,11 @@ const initRsvp = () => {
 
     $("climax-title").textContent = "The Climax: Your Ticket";
     showStage("ticket-stage");
+    const bringNote = $("bring-note");
+    if (bringNote) {
+      bringNote.textContent = CONFIG.bringNote || "";
+      bringNote.hidden = !CONFIG.bringNote;
+    }
     await renderTickets(rsvp);
     setShareInvite(rsvp);
   };
@@ -1226,6 +1231,7 @@ const initRsvp = () => {
           guestId: getGuestId(),
           quizScore: progress.quiz.score,
           options,
+          drinkOptions: cleanList(CONFIG.bringDrinks),
           teamOptions: CONFIG.teams.map((team) => team.name),
         }),
         delay(2200),

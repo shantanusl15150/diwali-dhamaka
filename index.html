@@ -267,7 +267,7 @@
 
               <div class="plus-one" id="plus-one" hidden>
                 <p class="plus-one-head">👯 Who are you bringing?</p>
-                <p class="plus-one-note">Just their name for our headcount. After you finish, share the invite — they RSVP, get a ticket, team &amp; mission themselves.</p>
+                <p class="plus-one-note">Name + WhatsApp required. After you finish, share the invite — they RSVP and get their own dish, ticket, team &amp; mission.</p>
                 <label class="field">
                   <span class="field-label">Their name</span>
                   <input type="text" name="plusOneName" maxlength="60" placeholder="e.g. Simran" />
@@ -286,8 +286,8 @@
                   </div>
                 </fieldset>
                 <label class="field">
-                  <span class="field-label">Their WhatsApp <small>(optional — so share opens their chat)</small></span>
-                  <input type="tel" name="plusOnePhone" inputmode="tel" maxlength="20" placeholder="e.g. 98765 43210" />
+                  <span class="field-label">Their WhatsApp 📱 <small>(compulsory — to share the invite)</small></span>
+                  <input type="tel" name="plusOnePhone" inputmode="tel" maxlength="20" placeholder="e.g. 98765 43210" required />
                 </label>
               </div>
 
@@ -350,6 +350,7 @@
               <p class="share-invite-text" id="share-invite-text"></p>
               <a class="btn btn-gold btn-big" id="share-invite-btn" href="#" target="_blank" rel="noopener">💬 WhatsApp the invite</a>
             </div>
+            <p class="stage-note" id="bring-note"></p>
             <p class="stage-note">Show your ticket at the door. Team scores go live on the party TV 📺</p>
             <a class="btn btn-pink" data-whatsapp href="#" target="_blank" rel="noopener" hidden>💬 Ping host</a>
           </div>
